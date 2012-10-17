@@ -29,6 +29,8 @@ mdbtools is also available under Cygwin. However, I haven't tested this package 
 
 To complete the installation, run the following command from this directory:
 
+.. code-block:: bash
+
     (sudo) python setup.py install
 
 Usage
@@ -46,11 +48,11 @@ Usage
     ["foo","bar","baz"]
 
 
-To get the data in a table, you have three options. 
+To get the data in a table, you have three options:
 
-- mdbread.Table.records(), which will return a generator of dictionaries, where the keys are column names and the values are the data.
-- "for row in mdbread.Table:" or "iter(mdbread.Table)" will return a namedtuple for each row
-- mdbread.Table.to_data_frame, which will return a pandas DataFrame containing all the data for the entire table (possibly requiring lots of memory) 
+- **mdbread.Table.records()** returns a generator of dictionaries, where the keys are column names and the values are the data.
+- **iter(mdbread.Table)** will return a namedtuple for each row. You can also use this form with **for row in tbl:**
+- **mdbread.Table.to_data_frame()** will return a pandas DataFrame containing all the data for the entire table (possibly requiring lots of memory) .
 
 Limitations
 ===========
