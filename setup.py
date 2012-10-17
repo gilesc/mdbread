@@ -18,8 +18,6 @@ setup(
     author='Cory Giles',
     author_email='cory.b.giles@gmail.com',
     url='http://corygil.es/',
-    zip_safe=False,
-    packages=['mdbread'],
     cmdclass={'build_ext': build_ext},
     ext_modules = [Extension("mdbread", ["mdbread.pyx"], 
                              **pkgconfig("libmdb"))],
