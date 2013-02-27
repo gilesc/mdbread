@@ -50,7 +50,7 @@ cdef extern from "mdbsql.h":
 transformers = {
     "Long Integer": int,
     "Single": float,
-    "Boolean": bool,
+    "Boolean": lambda x: bool(int(x))
     "Text": str,
     "DateTime": lambda dt: time.strptime(dt, "%m/%d/%y %H:%M:%S")
 }
@@ -147,6 +147,7 @@ cdef class Table(object):
 
         _transformers = [transformers[t] for t in col_types]
         while mdb_fetch_row(self.tbl):
+            print [self.bound_values[j] for j in xrange(self.ncol)]
             row = [_transformers[j](self.bound_values[j]) 
                    for j in xrange(self.ncol)]
             yield row
