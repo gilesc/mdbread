@@ -50,7 +50,7 @@ cdef extern from "mdbsql.h":
 transformers = {
     "Long Integer": int,
     "Single": float,
-    "Boolean": lambda x: bool(int(x))
+    "Boolean": lambda x: bool(int(x)),
     "Text": str,
     "DateTime": lambda dt: time.strptime(dt, "%m/%d/%y %H:%M:%S")
 }
