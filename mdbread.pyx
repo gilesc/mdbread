@@ -147,7 +147,6 @@ cdef class Table(object):
 
         _transformers = [transformers[t] for t in col_types]
         while mdb_fetch_row(self.tbl):
-            print [self.bound_values[j] for j in xrange(self.ncol)]
             row = [_transformers[j](self.bound_values[j]) 
                    for j in xrange(self.ncol)]
             yield row
