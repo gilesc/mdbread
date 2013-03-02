@@ -19,6 +19,12 @@ On Ubuntu this can be satisfied by:
 
     sudo apt-get install -y mdbtools-dev
 
+On ArchLinux:
+
+.. code-block:: bash
+
+    yaourt -S mdbtools
+
 On OSX:
 
 .. code-block:: bash
