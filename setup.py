@@ -2,16 +2,18 @@ from distutils.core import setup
 from distutils.extension import Extension
 from Cython.Distutils import build_ext
 
-import commands
+import subprocess as sp
 import sys
 
 def pkgconfig(*packages, **kw):
     flag_map = {'-I': 'include_dirs', 
                 '-L': 'library_dirs', 
                 '-l': 'libraries'}
-    cmd = "pkg-config --libs --cflags %s" % ' '.join(packages)
-    status, out = commands.getstatusoutput(cmd)
-    if status != 0:
+    cmd = ["pkg-config", "--libs", "--cflags"]
+    cmd.extend(packages)
+    try:
+        out = sp.check_output(cmd, universal_newlines=True)
+    except:
         raise SystemExit("libmdb (or pkg-config) is not installed! Aborting...")
     kw = {}
     for token in out.split():
