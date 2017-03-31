@@ -48,11 +48,12 @@ cdef extern from "mdbsql.h":
     void mdb_exit()
 
 transformers = {
-    "Long Integer": int,
+    "Long Integer": lambda x: int(x) if x != "" else "",
     "Single": float,
     "Boolean": lambda x: bool(int(x)),
     "Text": str,
-    "DateTime": lambda dt: time.strptime(dt, "%m/%d/%y %H:%M:%S")
+    "DateTime": lambda dt: time.strptime(dt, "%m/%d/%y %H:%M:%S"),
+    "Memo/Hyperlink": str
 }
 
 cdef class MDB(object):
