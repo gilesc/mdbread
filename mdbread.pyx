@@ -11,7 +11,6 @@ cdef extern from "glib.h":
         pass
 
 cdef extern from "mdbsql.h":
-    # void mdb_init()
     ctypedef struct MdbHandle:
         int num_catalog
         GPtrArray* catalog
@@ -61,7 +60,6 @@ cdef class MDB(object):
     cdef MdbHandle* _handle
 
     def __init__(self, path):
-        # mdb_init()
         self._handle = mdb_open(path, MDB_NOFLAGS)
         if not mdb_read_catalog(self._handle, MDB_ANY):
             raise Exception("File is not a valid Access database!")
