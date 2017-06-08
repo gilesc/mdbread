@@ -48,6 +48,7 @@ cdef extern from "mdbsql.h":
     void mdb_exit()
 
 transformers = {
+    "Integer": lambda x: int(x) if x != "" else "",
     "Long Integer": lambda x: int(x) if x != "" else "",
     "Single": float,
     "Boolean": lambda x: bool(int(x)),
