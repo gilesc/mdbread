@@ -1,6 +1,9 @@
 import pandas
+import numpy
 import time
 from collections import namedtuple
+
+ENCODING = "iso-8859-1"
 
 cdef extern from "glib.h":
     void* g_malloc(int)
@@ -46,12 +49,19 @@ cdef extern from "mdbsql.h":
     void mdb_close(MdbHandle*)
     void mdb_exit()
 
+def as_double(x):
+    try:
+        return float(x)
+    except:
+        return numpy.nan
+
 transformers = {
     "Integer": lambda x: int(x) if x != "" else "",
-    "Long Integer": lambda x: int(x) if x != "" else "",
+    "Long Integer": int,
     "Single": float,
+    "Double": as_double,
     "Boolean": lambda x: bool(int(x)),
-    "Text": str,
+    "Text": lambda x: x.decode(ENCODING),
     "DateTime": lambda dt: time.strptime(dt, "%m/%d/%y %H:%M:%S"),
     "Memo/Hyperlink": str
 }
@@ -60,6 +70,8 @@ cdef class MDB(object):
     cdef MdbHandle* _handle
 
     def __init__(self, path):
+        if isinstance(path, str):
+            path = path.encode("ascii")
         self._handle = mdb_open(path, MDB_NOFLAGS)
         if not mdb_read_catalog(self._handle, MDB_ANY):
             raise Exception("File is not a valid Access database!")
@@ -74,16 +86,16 @@ cdef class MDB(object):
                     g_ptr_array_index(self._handle.catalog, i)
             name = entry.object_name
             if entry.object_type == MDB_TABLE:
-                if not "MSys" in name:
-                    tables.append(name)
+                if not b"MSys" in name:
+                    tables.append(name.decode(ENCODING))
         return tables
 
     def __iter__(self):
         for tbl in self.tables:
             yield Table(self, tbl)
 
-    def __getitem__(self, key):
-        return Table(self, key)
+    def __getitem__(self, str key):
+        return Table(self, key.encode(ENCODING))
 
     def __del__(self):
         mdb_close(self._handle)
@@ -116,7 +128,7 @@ cdef class Table(object):
         cdef MdbColumn* col
         for j in xrange(self.ncol):
             col = <MdbColumn*> g_ptr_array_index(self.tbl.columns, j)
-            names.append(str(col.name))
+            names.append(col.name.decode(ENCODING))
         return names
 
     @property
@@ -139,7 +151,7 @@ cdef class Table(object):
         for j in xrange(self.ncol):
             col = <MdbColumn*> g_ptr_array_index(self.tbl.columns, j)
             col_type = mdb_get_colbacktype_string(col)
-            col_types.append(col_type)
+            col_types.append(col_type.decode(ENCODING))
 
             mdb_bind_column(self.tbl,j+1,
                             self.bound_values[j],

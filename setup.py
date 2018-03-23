@@ -22,7 +22,7 @@ def pkgconfig(*packages, **kw):
 
 setup(
     name='mdbread',
-    version='0.1',
+    version='0.1.1',
     description='Reader for MS Access MDB files.',
     author='Cory Giles',
     author_email='cory.b.giles@gmail.com',
