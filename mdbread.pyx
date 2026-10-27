@@ -47,7 +47,7 @@ cdef extern from "mdbsql.h":
     void mdb_bind_column(MdbTableDef*,int,char*,int*)
     int mdb_fetch_row(MdbTableDef*)
     void mdb_close(MdbHandle*)
-    void mdb_exit()
+    # void mdb_exit()
 
 def as_double(x):
     try:
@@ -99,7 +99,7 @@ cdef class MDB(object):
 
     def __del__(self):
         mdb_close(self._handle)
-        mdb_exit()
+        # mdb_exit()
 
 cdef class Table(object):
     cdef MdbTableDef* tbl
