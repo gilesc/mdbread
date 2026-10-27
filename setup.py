@@ -1,9 +1,18 @@
-from distutils.core import setup
-from distutils.extension import Extension
+try:
+    from setuptools import setup, Extension
+except ImportError:
+    from distutils.core import setup
+    from distutils.extension import Extension
 from Cython.Distutils import build_ext
 
+import os
 import subprocess as sp
 import sys
+
+# Ensure current working directory is the setup.py directory
+pkg_dir = os.path.dirname(os.path.abspath(__file__))
+if pkg_dir:
+    os.chdir(pkg_dir)
 
 def pkgconfig(*packages, **kw):
     flag_map = {'-I': 'include_dirs', 
@@ -17,7 +26,12 @@ def pkgconfig(*packages, **kw):
         raise SystemExit("libmdb (or pkg-config) is not installed! Aborting...")
     kw = {}
     for token in out.split():
-        kw.setdefault(flag_map.get(token[:2]), []).append(token[2:])
+        key = flag_map.get(token[:2])
+        if key:
+            kw.setdefault(key, []).append(token[2:])
+        else:
+            kw.setdefault('extra_compile_args', []).append(token)
+            kw.setdefault('extra_link_args', []).append(token)
     return kw
 
 setup(
